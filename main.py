@@ -1,16 +1,22 @@
-# This is a sample Python script.
+import time
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 
+import pandas as pd
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+caminho_pla = ""
+numeros_df = pd.read_excel(caminho_pla)
 
+#iniciando o google
+driver = webdriver.Chrome()
+driver.get('https://web.whatsapp.com/')
+wait = WebDriverWait(driver, 120)
+elemento = wait.until(
+    EC.visibility_of_element_located(
+        (By.CSS_SELECTOR, '#app > div > div > div._2Ts6i._3RGKj > header > div._3WByx')))
+time.sleep(10)
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
