@@ -31,7 +31,6 @@ elemento = wait.until(
         (By.CSS_SELECTOR, '#app > div > div > div._2Ts6i._3RGKj > header > div._3WByx')))
 
 
-
 def procurarElementocomSeletor(seletor, driver):
     wait = WebDriverWait(driver, 120)
     elemento = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, seletor)))
@@ -75,56 +74,54 @@ def obterPrimeiraLinha(texto):
 
 
 def comecar(driver, caminho_pla_numeros, ondeMandarNumeros):
+    # try:
+    numeros_df = pd.read_excel(caminho_pla_numeros)
 
-    try:
-        numeros_df = pd.read_excel(caminho_pla_numeros)
+    nomeCVS = procurarElementscomseletor("._21S-L .l7jjieqr", driver)
 
-        nomeCVS = procurarElementscomseletor("._21S-L .l7jjieqr", driver)
+    for i, mensagem in enumerate(numeros_df['numero']):
 
-        for i, mensagem in enumerate(numeros_df['numero']):
+        numeroTELL = numeros_df.loc[i, "numero"]
+        codigo = numeros_df.loc[i, "codigo"]
 
-            numeroTELL = numeros_df.loc[i, "numero"]
-            codigo = numeros_df.loc[i, "codigo"]
+        print(str(numeroTELL))
 
-            print(str(numeroTELL))
+        for elemt in nomeCVS:
+            # print(elemt.text)
+            if elemt.text == ondeMandarNumeros:
+                elemt.click()
+                escrever("#main .iq0m558w", str(numeroTELL), driver)
+                conversa = procurarElementscomseletor("._1jHIY , .ooty25bp", driver)
 
-            for elemt in nomeCVS:
-                print(ondeMandarNumeros)
-                if elemt.text == ondeMandarNumeros:
-                    print("oi")
-                    elemt.click()
-                    escrever("#main .iq0m558w", str(numeroTELL), driver)
-                    conversa = procurarElementscomseletor("._1jHIY , .ooty25bp", driver)
+                for linha in conversa:
 
-                    for linha in conversa:
+                    linhatxt = obterPrimeiraLinha(linha.text)
 
-                        linhatxt = obterPrimeiraLinha(linha.text)
+                    if linhatxt == str(numeroTELL):
+                        print("esse numero é igual")
 
-                        if linhatxt == str(numeroTELL):
-                            print("esse numero é igual")
+                        clicar_seletor_elemento("span._11JPr.selectable-text.copyable-text > span > a", linha,
+                                                driver)
 
-                            clicar_seletor_elemento("span._11JPr.selectable-text.copyable-text > span > a", linha,
-                                                    driver)
-
-                            try:
-                                conversarCOM = procurarElementocomSeletor(".iWqod._1MZM5._2BNs3.nqtxkp62.btzf6ewn",
-                                                                          driver)
-                                if conversarCOM.get_attribute("aria-label") == "Conversar com ":
-                                    print("esse numero da para mandar")
-                                    planilha_de_numeros_env["numero"].append(str(numeroTELL))
-                                    planilha_de_numeros_env["codigo"].append(str(codigo))
-                                    gerarPLanilahas(caminho_pla_num)
-                                    break
-                            except:
+                        try:
+                            conversarCOM = procurarElementocomSeletor(".iWqod._1MZM5._2BNs3.nqtxkp62.btzf6ewn",
+                                                                      driver)
+                            if conversarCOM.get_attribute("aria-label") == "Conversar com ":
+                                print("esse numero da para mandar")
                                 planilha_de_numeros_env["numero"].append(str(numeroTELL))
                                 planilha_de_numeros_env["codigo"].append(str(codigo))
-                                print("esse numero não da")
                                 gerarPLanilahas(caminho_pla_num)
                                 break
+                        except:
+                            planilha_de_numeros_Erro["numero"].append(str(numeroTELL))
+                            planilha_de_numeros_Erro["codigo"].append(str(codigo))
+                            print("esse numero não da")
+                            gerarPLanilahas(caminho_pla_num)
+                            break
 
-                continue
-    except Exception as e:
-        print("o erro é : ", e)
+                break
+    """except Exception as e:
+        print("o erro é : ", e)"""
 
 
 comecar(driver, caminho_pla_numeros, ondeMandarNumeros)
